@@ -1,5 +1,4 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+
 import './App.css'
 
 //React hook to manage state in functinal components
@@ -57,13 +56,13 @@ function App() {
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4 text-center">Task Manager</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center text-black">Task Manager</h1>
 
       {/* Input + Add button */}
       <div className="flex gap-2 mb-4">
         <input
           type="text"
-          className="flex-grow border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-grow border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
           placeholder="Add new task..."
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
@@ -87,7 +86,7 @@ function App() {
             <div
               onClick={() => toggleDone(task.id)}
               className={`cursor-pointer select-none ${
-                task.done ? "line-through text-gray-400" : ""
+                task.done ? "line-through text-gray-400" : "text-black"
               }`}
             >
               {task.text}
