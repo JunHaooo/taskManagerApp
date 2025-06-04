@@ -16,4 +16,20 @@ public class TaskService {
     public List<Task> getAllTasks() {
         return repo.findAll();
     }
+
+
+    public Task saveTask(Task task) {
+        return repo.save(task); // This saves a new task into the database
+    }
+
+    public Task updateTask(Long id, Task updatedTask) {
+        Task existingTask = repo.findById(id).orElseThrow();
+        existingTask.setText(updatedTask.getText());
+        existingTask.setDone(updatedTask.isDone());
+        return repo.save(existingTask);
+    }
+
+    public void deleteTask(Long id) {
+        repo.deleteById(id);
+    }
 }
