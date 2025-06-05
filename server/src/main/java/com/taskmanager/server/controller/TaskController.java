@@ -15,6 +15,7 @@ import java.util.List;
 import com.taskmanager.server.model.Task;
 import com.taskmanager.server.service.TaskService; // if applicable
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
