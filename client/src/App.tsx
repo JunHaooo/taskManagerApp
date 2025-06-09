@@ -13,22 +13,40 @@ interface Task {
 }
 
 function App() {
+  //loading state to let users know when data is being fetched
+  const [loading, setLoading] = useState(true);
+  
   //state to store list of tasks
   const [tasks, setTasks] = useState<Task[]>([]);
 
   //state to store the current input value for a new task
   const [newTask, setNewTask] = useState("");
 
+  //state so users know when an error occurs
+  const [error, setError] = useState<string | null>(null) //means error an either be a string or null
+
+  const [submitting, setSubmitting] = useState(false); 
+
   useEffect(() => {
     fetch("http://localhost:8080/tasks") //sends request to server to get tasks
       .then((res) => res.json()) //server responds with json, convert response to JS object/arrray  
-      .then((data) => setTasks(data)) //Updates the 'tasks' state with the fetched data
-      .catch((err) => console.error("Error fetching tasks:", err)); //catches any error
+      .then((data) => {
+        setTasks(data); //Updates the 'tasks' state with the fetched data
+        setLoading(false); //Done loading
+      })
+      .catch((err) => {
+        console.error("Error fetching tasks:", err); //catches any error
+        setError("Could not fetch tasks. Please try again.");
+        setLoading(false) //Stop loading even on any error
+      }); 
   }, []); //empty dependency  array means this runs once after the component mounts
 
   //function to add new task to the list 
   const handleAddTask = () => {
-    fetch('http://localhost:8080/tasks', { //sends a request to the URL
+    if (newTask.trim() === "") return;
+    
+    setSubmitting(true);
+    fetch(`http://localhost:8080/tasks`, { //sends a request to the URL
       method: 'POST', //tellig the backend that you want to add a new task
       headers: {'Content-Type': 'application/json'}, //provide metadata about the request by describing its details. this tells the server that you are JSON data in the body so that the server knows how to parse the data
       body: JSON.stringify({text: newTask, done: false}), //the body is the actual data you want to send, since fetch requires a string, stringify converts the JS object into a string
@@ -37,8 +55,12 @@ function App() {
     .then((task: Task) => {
       setTasks((prev) => [...prev, task]); //add task to UI (You're passing a function to setTasks. That function receives the latest/current value of tasks, and you're expected to return a new one.)
       setNewTask(''); //clear input field
-    }) //the parsed task's data is returned from the server 
-    .catch((err) => console.error('Error adding task:', err));
+    })
+    .then(() => setSubmitting(false)) //the parsed task's data is returned from the server 
+    .catch((err) => {
+      console.error('Error adding task:', err);
+      setError("Could not add tasks. Please try again.");
+    });
 
   };
 
@@ -49,7 +71,7 @@ function App() {
 
     const updatedTask = {...task, done: !task.done} //toggle done for task
     
-    fetch('http://localhost:8080/tasks/${id}', { //sends a request for the task's id
+    fetch(`http://localhost:8080/tasks/${id}`, { //sends a request for the task's id
       method: "Patch", //specifies that we want to partially update the task
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({done: updatedTask.done}), //Set the key done to the value of updatedTask.done and only sending the done field with the toggled value
@@ -61,12 +83,39 @@ function App() {
         // SYNTAX: condition ? valueIfTrue : valueIfFalse
       );
     })
-    .catch((err) => console.error('Error adding task:', err));
+    .catch((err) => {
+      console.error('Error editing task:', err);
+      setError("Could not edit tasks. Please try again.");
+  });
+  };
+
+  const deleteTask = (id: number) => {
+    const task = tasks.find((t) => t.id === id); //function returns if such a task id exists or not
+    if (!task) return; //if no id exist, terminate
+
+    const confirmed = window.confirm("Are you sure you want to delete this task?")
+
+    if (!confirmed) return;
+
+    fetch(`http://localhost:8080/tasks/${id}`,{
+      method: "DELETE"
+    })
+    .then((res) => res.json())
+    .then(() => {
+      // Update the UI by filtering out the deleted task
+      setTasks((prev) => prev.filter((task) => task.id !== id));
+    })
+    .catch((err) => {
+      console.error('Error deleting task:', err);
+      setError("Could not delete tasks. Please try again.");
+  });
   };
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <h1 className="text-2xl font-bold mb-4 text-center text-black">Task Manager</h1>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>} {/* if left hand side is false, right-side wont happen}
 
       {/* Input + Add button */}
       <div className="flex gap-2 mb-4">
@@ -78,15 +127,18 @@ function App() {
           onChange={(e) => setNewTask(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
         />
-        <button
+        {<button
           onClick={handleAddTask}
           className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+          disabled={submitting}
         >
           Add
-        </button>
+        </button>}
       </div>
 
-      {/* Task list */}
+      {/* Task list or loading*/}
+      {/*.map loops over each item in the array and returns a div based on the id and title in each item*/}
+      {loading ? (<p className="text-center text-gray-500">Loading tasks...</p>) : (
       <ul>
         {tasks.map((task) => (
           <li
@@ -110,6 +162,7 @@ function App() {
           </li>
         ))}
       </ul>
+    )}
     </div>
   );
 }
