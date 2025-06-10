@@ -29,7 +29,12 @@ function App() {
 
   useEffect(() => {
     fetch("http://localhost:8080/tasks") //sends request to server to get tasks
-      .then((res) => res.json()) //server responds with json, convert response to JS object/arrray  
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      }) //server responds with json, convert response to JS object/arrray  
       .then((data) => {
         setTasks(data); //Updates the 'tasks' state with the fetched data
         setLoading(false); //Done loading
@@ -43,13 +48,24 @@ function App() {
 
   //function to add new task to the list 
   const handleAddTask = () => {
-    if (newTask.trim() === "") return;
+    const trimmed = newTask.trim();
+    if (trimmed === "") return;
+
+    const duplicate = tasks.some(
+      (task) => task.text.toLowerCase() === trimmed.toLowerCase()
+    );
+
+    if (duplicate) {
+      const confirmed = window.confirm("Task already exists. Do you still want to add it?")
+
+      if (!confirmed) return;
+    }
     
     setSubmitting(true);
     fetch(`http://localhost:8080/tasks`, { //sends a request to the URL
       method: 'POST', //tellig the backend that you want to add a new task
       headers: {'Content-Type': 'application/json'}, //provide metadata about the request by describing its details. this tells the server that you are JSON data in the body so that the server knows how to parse the data
-      body: JSON.stringify({text: newTask, done: false}), //the body is the actual data you want to send, since fetch requires a string, stringify converts the JS object into a string
+      body: JSON.stringify({text: trimmed, done: false}), //the body is the actual data you want to send, since fetch requires a string, stringify converts the JS object into a string
     }) 
     .then((res) => res.json()) //when the server responds, fetch returns a response object res, the .json() method reads the response body and parses it into a JavaScript object or array
     .then((task: Task) => {
@@ -72,7 +88,7 @@ function App() {
     const updatedTask = {...task, done: !task.done} //toggle done for task
     
     fetch(`http://localhost:8080/tasks/${id}`, { //sends a request for the task's id
-      method: "Patch", //specifies that we want to partially update the task
+      method: "PUT", //specifies that we want to partially update the task
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({done: updatedTask.done}), //Set the key done to the value of updatedTask.done and only sending the done field with the toggled value
     })
@@ -100,7 +116,6 @@ function App() {
     fetch(`http://localhost:8080/tasks/${id}`,{
       method: "DELETE"
     })
-    .then((res) => res.json())
     .then(() => {
       // Update the UI by filtering out the deleted task
       setTasks((prev) => prev.filter((task) => task.id !== id));
