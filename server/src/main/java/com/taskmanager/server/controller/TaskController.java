@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.taskmanager.server.model.Task;
-import com.taskmanager.server.service.TaskService; // if applicable
+import com.taskmanager.server.service.TaskService;
+
+import jakarta.validation.Valid; // if applicable
 
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
@@ -36,7 +38,7 @@ public class TaskController {
 
     //POST a new task
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public Task createTask(@Valid @RequestBody Task task) {
         return service.saveTask(task);
     }
 

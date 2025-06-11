@@ -90,7 +90,7 @@ function App() {
     fetch(`http://localhost:8080/tasks/${id}`, { //sends a request for the task's id
       method: "PUT", //specifies that we want to partially update the task
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({done: updatedTask.done}), //Set the key done to the value of updatedTask.done and only sending the done field with the toggled value
+      body: JSON.stringify(updatedTask), //Set the key done to the value of updatedTask.done and only sending the done field with the toggled value
     })
     .then((res) => res.json()) //even though we dont use the parsed response, we need it to complete the HTTP response
     .then(() => { //recevies the parsed response but since we don't use it, we do not need to fill in the first ()

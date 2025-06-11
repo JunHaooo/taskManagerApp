@@ -4,13 +4,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id //marks id as the primary key in the table
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //auto-generates the value when saving new tasks
     private Long id;
+ 
+    @NotBlank(message = "Task text must not be empty.") //tells springboot to validate this field; it must not be null or just whitespace
     private String text;
+
     private boolean done; //defining the type
 
     //Constructors 
