@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.taskmanager.server.model.Task;
-import com.taskmanager.server.service.TaskService;
+import com.taskmanager.server.service.TaskServiceInterface;
 
 import jakarta.validation.Valid; // if applicable
 
@@ -23,7 +23,7 @@ import jakarta.validation.Valid; // if applicable
 @RequestMapping("/tasks")
 public class TaskController {
     @Autowired
-    private TaskService service;
+    private TaskServiceInterface service;
 
     /// syntax
     ///public ReturnType methodName(ParameterList) {method logic

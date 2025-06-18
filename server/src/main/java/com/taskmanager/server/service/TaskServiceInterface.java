@@ -1,8 +1,10 @@
+//this whole file is the basic functions any TaskService file should have. so next time can just XX file implements TaskServiceInterface can alr
+
 package com.taskmanager.server.service;
 
-import com.taskmanager.server.model.Task;
-
 import java.util.List;
+
+import com.taskmanager.server.model.Task;
 
 public interface TaskServiceInterface {
     List<Task> getAllTasks();
