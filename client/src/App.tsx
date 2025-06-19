@@ -4,6 +4,9 @@ import './App.css'
 //React hook to manage state in functinal components
 import { useState, useEffect } from "react";
 
+import TaskItem from "./TaskItem"; // adjust path if TaskItem.tsx is in a different folder
+
+
 // Type checking when we use id, text, done later
 // its like OOP ngl
 interface Task {
@@ -126,11 +129,12 @@ function App() {
   });
   };
 
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
       <h1 className="text-2xl font-bold mb-4 text-center text-black">Task Manager</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>} {/* if left hand side is false, right-side wont happen}
+      {error && <p style={{ color: 'red' }}>{error}</p>} {/*if left hand side is false, right-side wont happen*/}
 
       {/* Input + Add button */}
       <div className="flex gap-2 mb-4">
@@ -156,30 +160,17 @@ function App() {
       {loading ? (<p className="text-center text-gray-500">Loading tasks...</p>) : (
       <ul>
         {tasks.map((task) => (
-          <li
+          <TaskItem
             key={task.id}
-            className="flex justify-between items-center border-b border-gray-200 py-2"
-          >
-            <div
-              onClick={() => toggleDone(task.id)}
-              className={`cursor-pointer select-none ${
-                task.done ? "line-through text-gray-400" : "text-black"
-              }`}
-            >
-              {task.text}
-            </div>
-            <button
-              onClick={() => deleteTask(task.id)}
-              className="text-red-500 hover:text-red-700"
-            >
-              Delete
-            </button>
-          </li>
+            task={task}
+            onDelete={deleteTask}
+            onToggleDone={toggleDone}
+          />
         ))}
       </ul>
-    )}
+        )}
     </div>
-  );
+  )
 }
 
-export default App
+export default App;
