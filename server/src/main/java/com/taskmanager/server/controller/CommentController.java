@@ -1,6 +1,7 @@
 package com.taskmanager.server.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.taskmanager.server.model.Comment;
 import com.taskmanager.server.service.CommentService;
 
+
 @RestController
 @RequestMapping("/tasks/{taskId}/comments")
-@CrossOrigin(origins = "http://localhost:3000") // or 5173
+@CrossOrigin(origins = "http://localhost:5173") // or 5173
 public class CommentController {
 
     @Autowired
