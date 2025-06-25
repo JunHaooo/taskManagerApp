@@ -30,8 +30,12 @@ function App() {
 
   const [submitting, setSubmitting] = useState(false); 
 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+  console.log("Using API URL:", API_URL);
+  console.log("API URL used:", import.meta.env.VITE_API_URL);
+
   useEffect(() => {
-    fetch("http://localhost:8080/tasks") //sends request to server to get tasks
+    fetch(`${API_URL}/tasks`) //sends request to server to get tasks
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
@@ -65,7 +69,7 @@ function App() {
     }
     
     setSubmitting(true);
-    fetch(`http://localhost:8080/tasks`, { //sends a request to the URL
+    fetch(`${API_URL}/tasks`, { //sends a request to the URL
       method: 'POST', //tellig the backend that you want to add a new task
       headers: {'Content-Type': 'application/json'}, //provide metadata about the request by describing its details. this tells the server that you are JSON data in the body so that the server knows how to parse the data
       body: JSON.stringify({text: trimmed, done: false}), //the body is the actual data you want to send, since fetch requires a string, stringify converts the JS object into a string
@@ -90,7 +94,7 @@ function App() {
 
     const updatedTask = {...task, done: !task.done} //toggle done for task
     
-    fetch(`http://localhost:8080/tasks/${id}`, { //sends a request for the task's id
+    fetch(`${API_URL}/tasks/${id}`, { //sends a request for the task's id
       method: "PUT", //specifies that we want to partially update the task
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(updatedTask), //Set the key done to the value of updatedTask.done and only sending the done field with the toggled value
@@ -116,7 +120,7 @@ function App() {
 
     if (!confirmed) return;
 
-    fetch(`http://localhost:8080/tasks/${id}`,{
+    fetch(`${API_URL}/tasks/${id}`,{
       method: "DELETE"
     })
     .then(() => {

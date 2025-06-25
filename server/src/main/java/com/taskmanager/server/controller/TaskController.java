@@ -18,7 +18,7 @@ import com.taskmanager.server.service.TaskServiceInterface;
 
 import jakarta.validation.Valid; // if applicable
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {

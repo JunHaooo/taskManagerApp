@@ -21,11 +21,13 @@ function TaskItem({ task, onDelete, onToggleDone }: TaskProps) {
   const [commentLoading, setCommentLoading] = useState(false);
   const [commentError, setCommentError] = useState<string | null>(null);
   const [newCommentText, setNewCommentText] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 
   // Fetch comments on mount
   useEffect(() => {
     setCommentLoading(true);
-    fetch(`http://localhost:8080/tasks/${task.id}/comments`)
+    fetch(`${API_URL}/tasks/${task.id}/comments`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch comments");
         return res.json();
@@ -47,7 +49,7 @@ function TaskItem({ task, onDelete, onToggleDone }: TaskProps) {
     // Optional: clear error on new attempt
     setCommentError(null);
 
-    fetch(`http://localhost:8080/tasks/${task.id}/comments`, {
+    fetch(`${API_URL}/tasks/${task.id}/comments`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: newCommentText }),
